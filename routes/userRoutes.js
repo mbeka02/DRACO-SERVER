@@ -8,7 +8,7 @@ import {
   updateProfile,
 } from "../controllers/userController.js";
 
-import upload from "../middleware/upload.js";
+import { imageUpload } from "../middleware/upload.js";
 
 const router = Router();
 router.route("/showUser").get(showCurrentUser);
@@ -18,6 +18,6 @@ router.route("/updateProfile").patch(updateProfile);
 router.route("/updatePassword").post(updatePassword);
 router
   .route("/updateProfilePicture")
-  .post(upload.single("upload"), uploadImage);
+  .post(imageUpload.single("upload"), uploadImage);
 
 export default router;

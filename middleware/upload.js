@@ -1,7 +1,22 @@
 import multer from "multer";
 import BadRequestError from "../errors/bad-request.js";
+//import path from "path";
 
-const upload = multer({
+//import * as url from "url";
+//const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, "./documents");
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.originalname);
+  },
+});
+
+const fileUpload = multer({ storage: storage });
+
+const imageUpload = multer({
   //4 MB limit
   limits: {
     fileSize: 4000000,
@@ -19,4 +34,4 @@ const upload = multer({
   },
 });
 
-export default upload;
+export { imageUpload, fileUpload };

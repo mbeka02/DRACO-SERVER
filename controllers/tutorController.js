@@ -64,4 +64,19 @@ const createTutorReview = async (req, res) => {
   res.status(StatusCodes.CREATED).json({ msg: "Review created" });
 };
 
-export { getAllTutors, getSingleTutor, createTutorReview, updateTutorProfile };
+const uploadDocuments = async (req, res) => {
+  const documents = req.files;
+  if (!documents || documents.length === 0) {
+    throw new BadRequestError("Nothing to upload.");
+  }
+
+  res.status(StatusCodes.OK).json({ msg: "Documents uploaded" });
+};
+
+export {
+  getAllTutors,
+  getSingleTutor,
+  createTutorReview,
+  updateTutorProfile,
+  uploadDocuments,
+};

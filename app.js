@@ -47,7 +47,7 @@ app.use("/api/v1/tutors", authenticateUser, tutorRouter);
 app.use(
   "/images",
   authenticateUser,
-  express.static(path.join(__dirname, "/controllers/images"))
+  express.static(path.join(__dirname, "/images"))
 );
 
 app.use(notFoundMiddleware);

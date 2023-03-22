@@ -27,7 +27,7 @@ const uploadImage = async (req, res) => {
     await sharp(req.file.buffer)
       //   .resize({ width: 200, height: 200 })
       .png()
-      .toFile(__dirname + `/images/${req.file.originalname}`);
+      .toFile(/*__dirname +*/ `./images/${req.file.originalname}`);
 
     await User.findByIdAndUpdate(
       { _id: req.user.userId },
