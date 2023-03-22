@@ -108,6 +108,11 @@ const TutorSchema = User.discriminator(
     Experience: {
       type: Number,
     },
+    documents: [
+      {
+        type: String,
+      },
+    ],
   }),
   options
 );

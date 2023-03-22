@@ -69,8 +69,8 @@ const uploadDocuments = async (req, res) => {
   if (!documents || documents.length === 0) {
     throw new BadRequestError("Nothing to upload.");
   }
-
-  res.status(StatusCodes.OK).json({ msg: "Documents uploaded" });
+  //await Tutor.documents.push(`/documents/${req.fil}`)
+  res.status(StatusCodes.OK).json({ msg: req.files });
 };
 
 export {

@@ -15,7 +15,7 @@ const router = Router();
 router.route("/").get(getAllTutors);
 router
   .route("/uploadDocuments")
-  .post(fileUpload.array("documents"), uploadDocuments);
+  .post(fileUpload.array("files"), uploadDocuments);
 router.route("/updateProfile").patch(updateTutorProfile);
 router.route("/:id").get(getSingleTutor).post(createTutorReview);
 
