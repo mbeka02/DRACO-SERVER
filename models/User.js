@@ -72,7 +72,7 @@ BaseSchema.methods.verifyPassword = async function (inputPassword) {
 
 const User = model("User", BaseSchema);
 
-//Using discriminators- an inheritance mechanism -https://mongoosejs.com/docs/discriminators.html
+//Using discriminators- a schema inheritance mechanism -https://mongoosejs.com/docs/discriminators.html
 const options = { discriminatorKey: "Kind", collection: "users" };
 
 const TutorSchema = User.discriminator(
