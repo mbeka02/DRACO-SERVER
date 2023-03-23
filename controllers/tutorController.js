@@ -69,8 +69,13 @@ const uploadDocuments = async (req, res) => {
   if (!documents || documents.length === 0) {
     throw new BadRequestError("Nothing to upload.");
   }
-  //await Tutor.documents.push(`/documents/${req.fil}`)
-  res.status(StatusCodes.OK).json({ msg: req.files });
+  const tutor = await Tutor.findOne({ _id: req.user.userId });
+  for (let i = 0; i < documents.length; ++i) {
+    tutor.documents.push(`/documents/${req.files[i].originalname}`);
+  }
+  await tutor.save();
+
+  res.status(StatusCodes.OK).json({ msg: "files uploaded successfully" });
 };
 
 export {
