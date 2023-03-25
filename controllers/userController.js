@@ -36,6 +36,7 @@ const uploadImage = async (req, res) => {
       //   .resize({ width: 200, height: 200 })
       .png()
       .toFile(/*__dirname +*/ `./images/${req.file.originalname}`);
+    console.log("new file added");
 
     user.avatarUrl = `/images/${req.file.originalname}`;
     await user.save();
