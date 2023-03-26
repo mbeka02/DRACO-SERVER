@@ -1,4 +1,4 @@
-import { Tutor } from "../models/User.js";
+import { Education, Tutor } from "../models/User.js";
 import Review from "../models/Review.js";
 import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../errors/bad-request.js";
@@ -13,7 +13,7 @@ const getSingleTutor = async (req, res) => {
   const { id: tutorId } = req.params;
   const tutor = await Tutor.findOne({ _id: tutorId })
     .select("-password")
-    .populate("reviews");
+    .populate("reviews EducationInfo");
 
   if (!tutor) {
     throw new BadRequestError(
@@ -38,6 +38,25 @@ const updateTutorProfile = async (req, res) => {
     );
   }
   res.status(StatusCodes.OK).json({ msg: "Details updated" });
+};
+
+const addEducationalDetails = async (req, res) => {
+  const { school, degree, from, to } = req.body;
+  const tutor = await Tutor.findOne({ _id: req.user.userId });
+  if (!tutor) {
+    throw new BadRequestError(
+      "An error has occured, your tutor account details could not be found"
+    );
+  }
+  if (!school || !from || !to) {
+    throw new BadRequestError(
+      "Ensure that you have filled all the required fields"
+    );
+  }
+  const details = await Education.create({ school, degree, from, to });
+  tutor.EducationInfo.push(details);
+  await tutor.save();
+  res.status(StatusCodes.OK).json({ msg: "Details added" });
 };
 
 const createTutorReview = async (req, res) => {
@@ -84,4 +103,5 @@ export {
   createTutorReview,
   updateTutorProfile,
   uploadDocuments,
+  addEducationalDetails,
 };

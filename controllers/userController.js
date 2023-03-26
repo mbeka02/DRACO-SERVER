@@ -57,9 +57,9 @@ const getAvatar = async (req, res) => {
 };
 
 const getProfile = async (req, res) => {
-  const profile = await User.findOne({ _id: req.user.userId }).select(
-    "-password"
-  );
+  const profile = await User.findOne({ _id: req.user.userId })
+    .select("-password")
+    .populate("EducationInfo");
   res.status(StatusCodes.OK).json({ profile });
 };
 const showCurrentUser = async (req, res) => {
@@ -76,7 +76,7 @@ const updatePassword = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
   if (!user) {
     throw new BadRequestError(
-      "An error has occured, acount details could not be found"
+      "An error has occured, your account details could not be found"
     );
   }
   //check if old password is valid

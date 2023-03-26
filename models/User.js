@@ -2,6 +2,7 @@ import mongoose, { Schema, model } from "mongoose";
 import validator from "validator";
 import bcryptjs from "bcryptjs";
 
+//BASE USER SECTION
 const BaseSchema = new Schema({
   name: {
     type: String,
@@ -72,9 +73,32 @@ BaseSchema.methods.verifyPassword = async function (inputPassword) {
 
 const User = model("User", BaseSchema);
 
+//TUTOR SECTION
+
 //Using discriminators- a schema inheritance mechanism -https://mongoosejs.com/docs/discriminators.html
 const options = { discriminatorKey: "Kind", collection: "users" };
 
+//Schema for educational background info for the tutors
+const EducationSchema = new Schema({
+  //name of the school
+  school: {
+    type: String,
+  },
+  //degree attained
+  degree: {
+    type: String,
+  },
+
+  from: {
+    type: Number,
+  },
+  to: {
+    type: Number,
+  },
+});
+const Education = model("Education", EducationSchema);
+
+//tutors schema
 const TutorSchema = User.discriminator(
   "Tutor",
   new Schema({
@@ -108,9 +132,17 @@ const TutorSchema = User.discriminator(
     Experience: {
       type: Number,
     },
+    //refrence to uploaded documents
     documents: [
       {
         type: String,
+      },
+    ],
+    //sub-document for education info
+    EducationInfo: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Education",
       },
     ],
   }),
@@ -118,4 +150,4 @@ const TutorSchema = User.discriminator(
 );
 const Tutor = model("Tutor");
 
-export { User, Tutor };
+export { User, Tutor, Education };
