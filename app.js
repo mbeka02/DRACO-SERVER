@@ -22,6 +22,7 @@ import authRouter from "./routes/authRoutes.js";
 import testRouter from "./routes/testRoutes.js";
 import tutorRouter from "./routes/tutorRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import roomRouter from "./routes/roomRoutes.js";
 
 //dirname import- needed since were using esmodules and not commonJS
 import * as url from "url";
@@ -31,7 +32,12 @@ dotenv.config();
 
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server(httpServer, {});
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true,
+  },
+});
 
 app.set("trust proxy", 1);
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
@@ -47,6 +53,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/test", authenticateUser, testRouter);
 app.use("/api/v1/user", authenticateUser, userRouter);
 app.use("/api/v1/tutors", authenticateUser, tutorRouter);
+app.use("/api/v1/rooms", authenticateUser, roomRouter);
 app.use(
   "/images",
   authenticateUser,
@@ -58,7 +65,12 @@ app.use(errorHandlerMiddleware);
 
 const port = 3000 || process.env.PORT;
 
-//io.on("connection", (socket) => console.log("A user has connected"));
+io.on("connection", (socket) => console.log("A user has connected"));
+io.on("connection", (socket) => {
+  socket.on("form", (msg) => {
+    io.emit("form", msg);
+  });
+});
 
 const startServer = async () => {
   try {
@@ -72,3 +84,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+export { io };
