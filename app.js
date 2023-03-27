@@ -1,7 +1,8 @@
 import express, { json, urlencoded } from "express";
 import dotenv from "dotenv";
 import path from "path";
-
+import http from "http";
+import { Server } from "socket.io";
 import "express-async-errors";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -13,7 +14,7 @@ import connectDB from "./DB/connect.js";
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/errorHandler.js";
 
-//auth
+//auth middleware
 import authenticateUser from "./middleware/authentication.js";
 
 //route imports
@@ -29,6 +30,8 @@ const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 dotenv.config();
 
 const app = express();
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {});
 
 app.set("trust proxy", 1);
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
@@ -58,7 +61,7 @@ const port = 3000 || process.env.PORT;
 const startServer = async () => {
   try {
     await connectDB(process.env.DEVDB);
-    app.listen(port, () => {
+    httpServer.listen(port, () => {
       console.log(`Server is listening on port ${port}`);
     });
   } catch (error) {

@@ -10,7 +10,10 @@ const storage = multer.diskStorage({
     callback(null, "./documents");
   },
   filename: function (req, file, callback) {
-    callback(null, file.originalname /*.trim().split(/\s+/).join("_")*/);
+    callback(
+      null,
+      /*req.user.userId +*/ file.originalname /*.trim().split(/\s+/).join("_")*/
+    );
   },
 });
 
