@@ -58,6 +58,8 @@ app.use(errorHandlerMiddleware);
 
 const port = 3000 || process.env.PORT;
 
+//io.on("connection", (socket) => console.log("A user has connected"));
+
 const startServer = async () => {
   try {
     await connectDB(process.env.DEVDB);
