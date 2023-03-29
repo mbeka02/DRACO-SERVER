@@ -26,7 +26,7 @@ const attachCookies = ({ res, user, refreshToken }) => {
     secure: process.env.NODE_ENV === "production",
     signed: true,
   });
-
+  //nb change secure to true & samesite none
   res.cookie("refreshToken", REFRESHTOKEN, {
     httpOnly: true,
     expires: new Date(Date.now() + oneDay),

@@ -23,7 +23,7 @@ import testRouter from "./routes/testRoutes.js";
 import tutorRouter from "./routes/tutorRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import roomRouter from "./routes/roomRoutes.js";
-
+import messageRouter from "./routes/messageRoutes.js";
 //dirname import- needed since were using esmodules and not commonJS
 import * as url from "url";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
@@ -54,6 +54,7 @@ app.use("/api/v1/test", authenticateUser, testRouter);
 app.use("/api/v1/user", authenticateUser, userRouter);
 app.use("/api/v1/tutors", authenticateUser, tutorRouter);
 app.use("/api/v1/rooms", authenticateUser, roomRouter);
+app.use("/api/v1/messages", authenticateUser, messageRouter);
 app.use(
   "/images",
   authenticateUser,
@@ -66,11 +67,46 @@ app.use(errorHandlerMiddleware);
 const port = 3000 || process.env.PORT;
 
 io.on("connection", (socket) => console.log("A user has connected"));
+
 io.on("connection", (socket) => {
-  socket.on("form", (msg) => {
-    io.emit("form", msg);
+  //socket.on("form", (msg) => {
+  //socket.emit("form", msg);
+  socket.on("join", (roomName) => {
+    console.log(roomName);
+    //console.log(socket.id);
+    //let name = roomName;
+    Array.from(socket.rooms)
+      .filter((item) => item !== socket.id)
+      .forEach((id) => {
+        socket.leave(id);
+        socket.removeAllListeners(`emitMessage`);
+      });
+    //console.log(socket.rooms);
+    // });
+    socket.join(roomName);
+    socket.on(`emitMessage`, (message) => {
+      Array.from(socket.rooms)
+        .filter((item) => item !== socket.id)
+        .forEach((id) => {
+          socket.to(id).emit("onMessage", message);
+        });
+    });
+  });
+
+  socket.on("disconnect", () => {
+    console.log(socket.id + " ==== disconnected");
+    socket.removeAllListeners();
   });
 });
+
+/*io.on("connection", (socket) => {
+  socket.on("join", (roomName) => {
+    socket.join(roomName);
+    socket.on("emitMessage", (msg) => {
+      io.to(roomName).emit("onMessage", msg);
+    });
+  });
+});*/
 
 const startServer = async () => {
   try {
