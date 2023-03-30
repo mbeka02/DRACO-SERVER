@@ -145,6 +145,12 @@ const TutorSchema = User.discriminator(
         ref: "Education",
       },
     ],
+    Courses: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Course",
+      },
+    ],
   }),
   options
 );

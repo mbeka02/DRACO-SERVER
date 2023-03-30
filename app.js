@@ -66,44 +66,51 @@ app.use(errorHandlerMiddleware);
 
 const port = 3000 || process.env.PORT;
 
-io.on("connection", (socket) => console.log("A user has connected"));
+io.on("connection", (socket) => console.log(`User connected ${socket.id}`));
 
 io.on("connection", (socket) => {
   //socket.on("form", (msg) => {
   //socket.emit("form", msg);
-  socket.on("join", (roomName) => {
-    console.log(roomName);
+  socket.on("join", (roomId) => {
+    //console.log(roomName);
     //console.log(socket.id);
     //let name = roomName;
-    Array.from(socket.rooms)
+    //console.log(socket.rooms);
+
+    /*Array.from(socket.rooms)
       .filter((item) => item !== socket.id)
       .forEach((id) => {
         socket.leave(id);
         socket.removeAllListeners(`emitMessage`);
-      });
+      });*/
     //console.log(socket.rooms);
     // });
-    socket.join(roomName);
-    socket.on(`emitMessage`, (message) => {
-      Array.from(socket.rooms)
-        .filter((item) => item !== socket.id)
-        .forEach((id) => {
-          socket.to(id).emit("onMessage", message);
-        });
-    });
+    socket.join(roomId); //join user to specific room
+    //socket.on(`emitMessage`, (message) => {
+    //Array.from(socket.rooms)
+    //.filter((item) => item !== socket.id)
+    //.forEach((id) => {
+    //socket.in(roomName).emit("onMessage", message);
+    //});
+    // });
+    console.log(`User joined room ${roomId}`);
+  });
+  socket.on(`emitMessage`, ({ message, roomId }) => {
+    //console.log(message);
+    io.to(roomId).emit("onMessage", message);
   });
 
-  socket.on("disconnect", () => {
+  /* socket.on("disconnect", () => {
     console.log(socket.id + " ==== disconnected");
     socket.removeAllListeners();
-  });
+  });*/
 });
 
 /*io.on("connection", (socket) => {
   socket.on("join", (roomName) => {
     socket.join(roomName);
     socket.on("emitMessage", (msg) => {
-      io.to(roomName).emit("onMessage", msg);
+      socket.to(roomName).emit("onMessage", msg);
     });
   });
 });*/

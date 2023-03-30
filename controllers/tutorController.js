@@ -2,6 +2,7 @@ import { Education, Tutor } from "../models/User.js";
 import Review from "../models/Review.js";
 import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../errors/bad-request.js";
+import Course from "../models/Course.js";
 
 const getAllTutors = async (req, res) => {
   const tutors = await Tutor.find({}).select("-password");
@@ -38,6 +39,20 @@ const updateTutorProfile = async (req, res) => {
     );
   }
   res.status(StatusCodes.OK).json({ msg: "Details updated" });
+};
+
+const addCourses = async (req, res) => {
+  const tutor = await Tutor.findOne({ _id: req.user.userId });
+  if (!tutor) {
+    throw new BadRequestError(
+      "An error has occured, your tutor account details could not be found"
+    );
+  }
+  const course = await Course.create(req.body);
+
+  tutor.Courses.push(course);
+  await tutor.save();
+  res.status(StatusCodes.OK).json({ msg: "Details added" });
 };
 
 const addEducationalDetails = async (req, res) => {
