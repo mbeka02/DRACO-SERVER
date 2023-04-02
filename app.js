@@ -77,6 +77,13 @@ io.on("connection", (socket) => {
   socket.on(`emitMessage`, ({ message, roomId }) => {
     io.to(roomId).emit("onMessage", message);
   });
+  socket.on("typing", ({ roomId }) => {
+    socket.to(roomId).emit("...typing");
+  });
+  socket.on("stopped", ({ roomId }) => {
+    // console.log(` ${roomId}`);
+    socket.to(roomId).emit("...stopped");
+  });
 });
 
 const startServer = async () => {
