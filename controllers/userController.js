@@ -8,8 +8,6 @@ import UnauthorizedError from "../errors/unauthorized.js";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 import { unlink } from "fs";
 
-import { io } from "../app.js";
-
 const updateProfile = async (req, res) => {
   const user = await User.findByIdAndUpdate(
     { _id: req.user.userId },

@@ -145,15 +145,21 @@ const TutorSchema = User.discriminator(
         ref: "Education",
       },
     ],
-    Courses: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "Course",
-      },
-    ],
+    //Might change back to sub-document
+    Courses: {
+      type: Array,
+    },
   }),
   options
 );
+//static functions
+/*TutorSchema.statics.queryInfo = async function (param) {
+  const result = await this.aggregate([
+    { $unwind: "Courses" },
+    { $match: { name: param } },
+  ]);
+  return result;
+};*/
 const Tutor = model("Tutor");
 
 export { User, Tutor, Education };

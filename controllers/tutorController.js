@@ -5,8 +5,38 @@ import BadRequestError from "../errors/bad-request.js";
 import Course from "../models/Course.js";
 
 const getAllTutors = async (req, res) => {
-  const tutors = await Tutor.find({}).select("-password");
+  const { search } = req.query;
+  /*const tutors = await Tutor.aggregate([
+     {
+      $unwind: "$Courses",
+    },
+    //can't get this to work yet
+    {
+      $search: {
+        index: "name_auto",
+        autocomplete: {
+          query: search, // noticed we assign a dynamic value to "query"
+          path: "Courses",
+        },
+      },
+    },
+    {
+      $project: {
+        name: 1,
+      },
+    },
+  ]);*/
 
+  //.select("-password").populate("Courses");
+
+  if (search) {
+    const tutors = await Tutor.find({ Courses: { $in: [search] } }).select(
+      "-password"
+    );
+    //.populate("Courses");
+    return res.status(StatusCodes.OK).json({ tutors });
+  }
+  const tutors = await Tutor.find({}).select("-password"); //.populate("Courses");
   res.status(StatusCodes.OK).json({ tutors });
 };
 
@@ -42,15 +72,17 @@ const updateTutorProfile = async (req, res) => {
 };
 
 const addCourses = async (req, res) => {
+  const { name } = req.body;
   const tutor = await Tutor.findOne({ _id: req.user.userId });
   if (!tutor) {
     throw new BadRequestError(
       "An error has occured, your tutor account details could not be found"
     );
   }
-  const course = await Course.create(req.body);
+  //const course = await Course.create(req.body);
 
-  tutor.Courses.push(course);
+  //tutor.Courses.push(course);
+  tutor.Courses.push(name);
   await tutor.save();
   res.status(StatusCodes.OK).json({ msg: "Details added" });
 };
@@ -119,4 +151,5 @@ export {
   updateTutorProfile,
   uploadDocuments,
   addEducationalDetails,
+  addCourses,
 };

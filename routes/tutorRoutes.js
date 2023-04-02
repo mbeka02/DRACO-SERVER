@@ -5,6 +5,7 @@ import {
   updateTutorProfile,
   uploadDocuments,
   addEducationalDetails,
+  addCourses,
 } from "../controllers/tutorController.js";
 
 import { fileUpload } from "../middleware/upload.js";
@@ -15,6 +16,7 @@ const router = Router();
 
 router.route("/").get(getAllTutors);
 router.route("/education").post(addEducationalDetails);
+router.route("/addCourses").post(addCourses);
 router
   .route("/uploadDocuments")
   .post(fileUpload.array("files"), uploadDocuments);
