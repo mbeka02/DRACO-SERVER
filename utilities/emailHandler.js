@@ -46,7 +46,7 @@ const sendActivationEmail = ({ name, email, activationToken, origin }) => {
   const message = `<p>Hello ${name} ,click the link to activate your account:<a href=${origin}/api/v1/auth/verifyAccount/${activationToken}>Activate account</a>
       </p>`;
 
-  return sendEmail({
+  sendEmail({
     to: email,
     subject: "Account activation",
     html: message,

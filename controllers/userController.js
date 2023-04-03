@@ -25,12 +25,12 @@ const updateProfile = async (req, res) => {
 
 const uploadImage = async (req, res) => {
   const user = await User.findOne({ _id: req.user.userId });
-  unlink(`./${user.avatarUrl}`, (err) => {
+  /*unlink(`./${user?.avatarUrl}`, (err) => {
     if (err) {
       console.log(err);
     }
     console.log("file deleted");
-  });
+  });*/
   try {
     await sharp(req.file.buffer)
       //   .resize({ width: 200, height: 200 })
