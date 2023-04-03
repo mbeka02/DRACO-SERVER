@@ -66,23 +66,51 @@ app.use(errorHandlerMiddleware);
 
 const port = 3000 || process.env.PORT;
 
-io.on("connection", (socket) => console.log(`User connected ${socket.id}`));
+//io.on("connection", (socket) => console.log(`User connected ${socket.id}`));
 
 io.on("connection", (socket) => {
   socket.on("join", (roomId) => {
+    //console.log(socket.rooms);
+
+    //socket has to leave all other rooms before it joins new one , prevents events from being visible while in another room
+    Array.from(socket.rooms)
+      //by default the users own socket id is in socket.rooms we have to exclude it
+      .filter((item) => item !== socket.id)
+      .forEach((room) => {
+        if (room !== roomId) {
+          socket.leave(room);
+
+          console.log(`User:${socket.id} has left room: ${room}`);
+        }
+      });
     socket.join(roomId); //join user to specific room
 
-    console.log(`User joined room ${roomId}`);
+    //socket.roomId = roomId;
+
+    // console.log(`User joined room ${roomId}`);
   });
+
   socket.on(`emitMessage`, ({ message, roomId }) => {
+    //visible to everyone in the room including the sender
     io.to(roomId).emit("onMessage", message);
   });
+  //Only display typing event to recipient
   socket.on("typing", ({ roomId }) => {
     socket.to(roomId).emit("...typing");
   });
   socket.on("stopped", ({ roomId }) => {
-    // console.log(` ${roomId}`);
     socket.to(roomId).emit("...stopped");
+  });
+  //handle disconnects
+  socket.on("disconnect", () => {
+    /*socket.rooms.forEach((roomId) => {
+      socket.leave(roomId);
+      console.log(`User has left room: ${roomId}`);
+    });*/
+    Array.from(socket.rooms).forEach((room) => {
+      socket.leave(room);
+      console.log(`User has left room ${room}`);
+    });
   });
 });
 
