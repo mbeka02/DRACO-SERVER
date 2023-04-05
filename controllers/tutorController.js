@@ -31,7 +31,7 @@ const getAllTutors = async (req, res) => {
 
   if (search) {
     const tutors = await Tutor.find({ Courses: { $in: [search] } }).select(
-      "-password"
+      "-password "
     );
     //.populate("Courses");
     return res.status(StatusCodes.OK).json({ tutors });
