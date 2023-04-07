@@ -5,7 +5,12 @@ const createMessage = async (req, res) => {
   const { id: roomId } = req.params;
   const { text } = req.body;
 
-  await Message.create({ sender: req.user.userId, text: text, room: roomId });
+  await Message.create({
+    sender: req.user.userId,
+    createdBy: req.user.name,
+    text: text,
+    room: roomId,
+  });
   res.status(StatusCodes.CREATED).json({ msg: "message created" });
 };
 

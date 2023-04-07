@@ -19,7 +19,7 @@ import authenticateUser from "./middleware/authentication.js";
 
 //route imports
 import authRouter from "./routes/authRoutes.js";
-import testRouter from "./routes/testRoutes.js";
+
 import tutorRouter from "./routes/tutorRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import roomRouter from "./routes/roomRoutes.js";
@@ -50,7 +50,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/test", authenticateUser, testRouter);
+
 app.use("/api/v1/user", authenticateUser, userRouter);
 app.use("/api/v1/tutors", authenticateUser, tutorRouter);
 app.use("/api/v1/rooms", authenticateUser, roomRouter);
@@ -90,9 +90,11 @@ io.on("connection", (socket) => {
     // console.log(`User joined room ${roomId}`);
   });
 
-  socket.on(`emitMessage`, ({ message, roomId }) => {
+  socket.on(`emitMessage`, ({ message, roomId, sender }) => {
     //visible to everyone in the room including the sender
-    io.to(roomId).emit("onMessage", message);
+    const messageInfo = { message, sender };
+    //console.log(messageInfo);
+    io.to(roomId).emit("onMessage", messageInfo);
   });
   //Only display typing event to recipient
   socket.on("typing", ({ roomId }) => {
