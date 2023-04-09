@@ -6,6 +6,12 @@ const RoomSchema = new mongoose.Schema(
       type: Array,
       required: true,
     },
+    messages: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Message",
+      },
+    ],
   },
   { timestamps: true }
 );

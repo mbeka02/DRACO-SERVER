@@ -17,7 +17,11 @@ const createRoom = async (req, res) => {
 };
 
 const getRooms = async (req, res) => {
-  const rooms = await Room.find({ users: { $in: [req.user.userId] } });
+  const rooms = await Room.find(
+    { users: { $in: [req.user.userId] } },
+    //gets array with only last index(message)
+    { messages: { $slice: -1 } }
+  ).populate("messages");
   res.status(StatusCodes.OK).json({ rooms });
 };
 

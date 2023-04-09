@@ -16,11 +16,11 @@ const MessageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    room: {
+    /*room: {
       type: mongoose.Schema.ObjectId,
       ref: "Room",
       required: true,
-    },
+    },*/
   },
   { timestamps: true }
 );
