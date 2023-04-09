@@ -92,7 +92,13 @@ io.on("connection", (socket) => {
 
   socket.on(`emitMessage`, ({ message, roomId, sender }) => {
     //visible to everyone in the room including the sender
-    const messageInfo = { message, sender };
+    const today = new Date();
+    const dateTimeFormatter = new Intl.DateTimeFormat(undefined, {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+    const dateTimeFormat = dateTimeFormatter.format(Date.parse(today));
+    const messageInfo = { message, sender, dateTimeFormat };
     //console.log(messageInfo);
     io.to(roomId).emit("onMessage", messageInfo);
   });
