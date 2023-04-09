@@ -12,15 +12,24 @@ const createRoom = async (req, res) => {
     );
   }
 
-  const room = await Room.create({ users: [req.user.userId, tutorId] });
+  const room = await Room.create({
+    userIds: [req.user.userId, tutorId],
+    userNames: [req.user.name, tutor.name],
+  });
   res.status(StatusCodes.CREATED).json({ room });
 };
-
+//switch to aggregation
 const getRooms = async (req, res) => {
   const rooms = await Room.find(
-    { users: { $in: [req.user.userId] } },
-    //gets array with only last index(message)
-    { messages: { $slice: -1 } }
+    { userIds: { $in: [req.user.userId] } },
+    /*gets array with only last index(message)
+    -preview feature for the latest message in the room check index.jsx in the messages folder on the client*/
+    {
+      messages: { $slice: -1 },
+      /*gets name of the other person the user is in the room with-might be 
+      problematic since a user can change their name and this field won't update*/
+      userNames: { $elemMatch: { $ne: req.user.name } },
+    }
   ).populate("messages");
   res.status(StatusCodes.OK).json({ rooms });
 };

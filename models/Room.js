@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 
 const RoomSchema = new mongoose.Schema(
   {
-    users: {
+    userIds: {
+      type: Array,
+      required: true,
+    },
+    userNames: {
       type: Array,
       required: true,
     },
