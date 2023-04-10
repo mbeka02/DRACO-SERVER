@@ -18,7 +18,7 @@ const createRoom = async (req, res) => {
   });
   res.status(StatusCodes.CREATED).json({ room });
 };
-//switch to aggregation
+//switch to aggregate
 const getRooms = async (req, res) => {
   const rooms = await Room.find(
     /*Gets all the chats the user is in*/

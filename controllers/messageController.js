@@ -25,7 +25,14 @@ const createMessage = async (req, res) => {
 
 const getRoomMessages = async (req, res) => {
   const { id: roomId } = req.params;
-  const roomMessages = await Room.findOne({ _id: roomId }).populate("messages");
+  const roomMessages = await Room.findOne(
+    { _id: roomId },
+    {
+      /*gets name of the other person the user is in the room with-might be 
+  problematic since a user can change their name and this field won't update*/
+      userNames: { $elemMatch: { $ne: req.user.name } },
+    }
+  ).populate("messages");
   res.status(StatusCodes.OK).json({ roomMessages });
 };
 
