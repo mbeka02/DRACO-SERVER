@@ -21,6 +21,7 @@ const createRoom = async (req, res) => {
 //switch to aggregation
 const getRooms = async (req, res) => {
   const rooms = await Room.find(
+    /*Gets all the chats the user is in*/
     { userIds: { $in: [req.user.userId] } },
     /*gets array with only last index(message)
     -preview feature for the latest message in the room check index.jsx in the messages folder on the client*/
