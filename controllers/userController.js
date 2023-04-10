@@ -51,7 +51,7 @@ const uploadImage = async (req, res) => {
 
 const getAvatar = async (req, res) => {
   const avatar = await User.findOne({ _id: req.user.userId }).select(
-    "avatarUrl  name"
+    "avatarUrl  name role"
   );
   res.status(StatusCodes.OK).json({ avatar });
 };

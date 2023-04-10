@@ -80,7 +80,11 @@ const addCourses = async (req, res) => {
     );
   }
   //const course = await Course.create(req.body);
-
+  if (!name) {
+    throw new BadRequestError(
+      "Ensure that you have filled all the required fields"
+    );
+  }
   //tutor.Courses.push(course);
   tutor.Courses.push(name);
   await tutor.save();
