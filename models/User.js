@@ -20,7 +20,7 @@ const BaseSchema = new Schema({
     },
   },
   phoneNumber: {
-    type: Number,
+    type: String,
   },
 
   password: {

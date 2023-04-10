@@ -17,7 +17,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, phoneNumber } = req.body;
 
   const emailExists = await User.findOne({ email: email });
 
@@ -32,6 +32,7 @@ const register = async (req, res) => {
     email,
     password,
     role,
+    phoneNumber,
   });
   // create 'activation' token and pass it to email sending fn, use the email as the payload
   const activationToken = jwt.sign(
