@@ -27,11 +27,13 @@ const getRooms = async (req, res) => {
     -preview feature for the latest message in the room check index.jsx in the messages folder on the client*/
     {
       messages: { $slice: -1 },
-      /*gets name of the other person the user is in the room with-might be 
-      problematic since a user can change their name and this field won't update*/
-      userNames: { $elemMatch: { $ne: req.user.name } },
+      //gets info on the other person the user is with
+      /*refactor*/
+      userIds: { $elemMatch: { $ne: req.user.userId } },
     }
-  ).populate("messages");
+  )
+    .populate("messages")
+    .populate("userIds", "name avatarUrl");
   res.status(StatusCodes.OK).json({ rooms });
 };
 

@@ -2,14 +2,18 @@ import mongoose from "mongoose";
 
 const RoomSchema = new mongoose.Schema(
   {
-    userIds: {
-      type: Array,
-      required: true,
-    },
-    userNames: {
-      type: Array,
-      required: true,
-    },
+    userIds: [
+      {
+        type: mongoose.Schema.ObjectId,
+        required: true,
+        ref: "User",
+      },
+      {
+        type: mongoose.Schema.ObjectId,
+        required: true,
+        ref: "User",
+      },
+    ],
     messages: [
       {
         type: mongoose.Schema.ObjectId,
