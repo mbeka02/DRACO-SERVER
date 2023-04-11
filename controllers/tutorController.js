@@ -2,10 +2,9 @@ import { Education, Tutor } from "../models/User.js";
 import Review from "../models/Review.js";
 import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../errors/bad-request.js";
-import Course from "../models/Course.js";
 
 const getAllTutors = async (req, res) => {
-  const { search } = req.query;
+  const { search, order } = req.query;
   /*const tutors = await Tutor.aggregate([
      {
       $unwind: "$Courses",
@@ -28,22 +27,36 @@ const getAllTutors = async (req, res) => {
   ]);*/
 
   //.select("-password").populate("Courses");
-
+  // console.log(order);
+  //refactor
   if (search) {
     const tutors = await Tutor.find({ Courses: { $in: [search] } }).select(
-      "-password "
+      "-password -Messages -documents "
     );
-    //.populate("Courses");
+
     return res.status(StatusCodes.OK).json({ tutors });
   }
-  const tutors = await Tutor.find({}).select("-password"); //.populate("Courses");
+  if (order) {
+    const tutors = await Tutor.find({})
+      .select("-password -Messages -documents")
+      .sort({ Rate: order });
+    return res.status(StatusCodes.OK).json({ tutors });
+  }
+  if (search && order) {
+    const tutors = await Tutor.find({ Courses: { $in: [search] } })
+      .select("-password -Messages -documents ")
+      .sort({ Rate: order });
+
+    return res.status(StatusCodes.OK).json({ tutors });
+  }
+  const tutors = await Tutor.find({}).select("-password -Messages -documents");
   res.status(StatusCodes.OK).json({ tutors });
 };
 
 const getSingleTutor = async (req, res) => {
   const { id: tutorId } = req.params;
   const tutor = await Tutor.findOne({ _id: tutorId })
-    .select("-password")
+    .select("-password -Messages -documents")
     .populate("reviews EducationInfo");
 
   if (!tutor) {

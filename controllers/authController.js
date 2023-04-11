@@ -137,23 +137,6 @@ const login = async (req, res) => {
 
   res.status(StatusCodes.OK).json({ tokenUser });
 };
-//DEV TESTING ONLY WON'T WORK IN PRODUCTION
-/*const testEmailSender = async (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    throw new BadRequestError("Ensure that you have enterd your email");
-  }
-  const user = await User.findOne({ email: email });
-  if (!user) {
-    throw new BadRequestError(
-      "Account does not exist or the email is incorrect"
-    );
-  }
-
-  await sendEmail({ name: user.name, email: user.email });
-
-  res.status(StatusCodes.OK).json({ msg: "Check your email" });
-};*/
 
 //Revoke all tokens
 const logout = async (req, res) => {
