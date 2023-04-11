@@ -33,6 +33,7 @@ const register = async (req, res) => {
     password,
     role,
     phoneNumber,
+    avatarUrl: "/images/default.png",
   });
   // create 'activation' token and pass it to email sending fn, use the email as the payload
   const activationToken = jwt.sign(
