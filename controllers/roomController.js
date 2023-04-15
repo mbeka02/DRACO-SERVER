@@ -5,6 +5,15 @@ import { Tutor } from "../models/User.js";
 
 const createRoom = async (req, res) => {
   const { id: tutorId } = req.params;
+  const roomExists = await Room.findOne({
+    //finds the exact room
+    userIds: { $eq: [req.user.userId, tutorId] },
+  });
+
+  if (roomExists) {
+    // console.log(roomExists);
+    return res.status(StatusCodes.OK).json({ room: roomExists });
+  }
   const tutor = await Tutor.findOne({ _id: tutorId });
   if (!tutor) {
     throw new BadRequestError(
@@ -14,7 +23,6 @@ const createRoom = async (req, res) => {
 
   const room = await Room.create({
     userIds: [req.user.userId, tutorId],
-    userNames: [req.user.name, tutor.name],
   });
   res.status(StatusCodes.CREATED).json({ room });
 };
