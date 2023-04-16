@@ -149,6 +149,10 @@ const TutorSchema = User.discriminator(
     Courses: {
       type: Array,
     },
+    isProfileComplete: {
+      type: Boolean,
+      default: false,
+    },
   }),
   options
 );

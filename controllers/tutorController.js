@@ -30,26 +30,32 @@ const getAllTutors = async (req, res) => {
   // console.log(order);
   //refactor
   if (search) {
-    const tutors = await Tutor.find({ Courses: { $in: [search] } }).select(
-      "-password -Messages -documents "
-    );
+    const tutors = await Tutor.find({
+      Courses: { $in: [search] },
+      isProfileComplete: true,
+    }).select("-password -Messages -documents ");
 
     return res.status(StatusCodes.OK).json({ tutors });
   }
   if (order) {
-    const tutors = await Tutor.find({})
+    const tutors = await Tutor.find({ isProfileComplete: true })
       .select("-password -Messages -documents")
       .sort({ Rate: order });
     return res.status(StatusCodes.OK).json({ tutors });
   }
   if (search && order) {
-    const tutors = await Tutor.find({ Courses: { $in: [search] } })
+    const tutors = await Tutor.find({
+      Courses: { $in: [search] },
+      isProfileComplete: true,
+    })
       .select("-password -Messages -documents ")
       .sort({ Rate: order });
 
     return res.status(StatusCodes.OK).json({ tutors });
   }
-  const tutors = await Tutor.find({}).select("-password -Messages -documents");
+  const tutors = await Tutor.find({ isProfileComplete: true }).select(
+    "-password -Messages -documents"
+  );
   res.status(StatusCodes.OK).json({ tutors });
 };
 
@@ -69,18 +75,24 @@ const getSingleTutor = async (req, res) => {
 };
 
 const updateTutorProfile = async (req, res) => {
-  const tutor = await Tutor.findByIdAndUpdate(
-    { _id: req.user.userId },
-    req.body,
-    {
-      runValidators: true,
-    }
-  );
+  const { Headline, Description, Rate, Experience } = req.body;
+  const tutor = await Tutor.findOne({ _id: req.user.userId });
   if (!tutor) {
     throw new BadRequestError(
       "Unable to find and update your account details, please try again"
     );
   }
+
+  const isProfileComplete =
+    Headline && Description && Rate && Experience ? true : false;
+
+  tutor.Headline = Headline;
+  tutor.Description = Description;
+  tutor.Rate = Rate;
+  tutor.Experience = Experience;
+  tutor.isProfileComplete = isProfileComplete;
+
+  await tutor.save();
   res.status(StatusCodes.OK).json({ msg: "Details updated" });
 };
 
