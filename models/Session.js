@@ -20,11 +20,6 @@ const SessionSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Enter the duration of the session"],
   },
-  course: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Course",
-    required: true,
-  },
 });
 
 export default mongoose.model("Session", SessionSchema);
