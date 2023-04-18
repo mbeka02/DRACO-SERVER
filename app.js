@@ -111,6 +111,15 @@ io.on("connection", (socket) => {
   socket.on("stopped", ({ roomId }) => {
     socket.to(roomId).emit("...stopped");
   });
+
+  socket.on("incomingCall", (data) => {
+    io.emit("call", { signal: data.signalData });
+  });
+
+  socket.on("acceptCall", (data) => {
+    io.emit("callAccepted", data.signal);
+  });
+
   //handle disconnects
   socket.on("disconnect", () => {
     /*socket.rooms.forEach((roomId) => {
