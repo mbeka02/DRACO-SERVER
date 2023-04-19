@@ -29,33 +29,18 @@ const getAllTutors = async (req, res) => {
   //.select("-password").populate("Courses");
   // console.log(order);
   //refactor
-  if (search) {
-    const tutors = await Tutor.find({
-      Courses: { $in: [search] },
-      isProfileComplete: true,
-    }).select("-password -Messages -documents ");
 
-    return res.status(StatusCodes.OK).json({ tutors });
-  }
-  if (order) {
-    const tutors = await Tutor.find({ isProfileComplete: true })
-      .select("-password -Messages -documents")
-      .sort({ Rate: order });
-    return res.status(StatusCodes.OK).json({ tutors });
-  }
-  if (search && order) {
-    const tutors = await Tutor.find({
-      Courses: { $in: [search] },
-      isProfileComplete: true,
-    })
-      .select("-password -Messages -documents ")
-      .sort({ Rate: order });
+  const tutors = await Tutor.find(
+    search
+      ? {
+          Courses: { $in: [search] },
+          isProfileComplete: true,
+        }
+      : { isProfileComplete: true }
+  )
+    .select("-password -Messages -documents ")
+    .sort(order);
 
-    return res.status(StatusCodes.OK).json({ tutors });
-  }
-  const tutors = await Tutor.find({ isProfileComplete: true }).select(
-    "-password -Messages -documents"
-  );
   res.status(StatusCodes.OK).json({ tutors });
 };
 
