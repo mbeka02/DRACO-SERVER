@@ -156,14 +156,6 @@ const TutorSchema = User.discriminator(
   }),
   options
 );
-//static functions
-/*TutorSchema.statics.queryInfo = async function (param) {
-  const result = await this.aggregate([
-    { $unwind: "Courses" },
-    { $match: { name: param } },
-  ]);
-  return result;
-};*/
 const Tutor = model("Tutor");
 
 export { User, Tutor, Education };

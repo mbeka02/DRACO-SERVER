@@ -1,11 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../errors/bad-request.js";
-import Room from "../models/Room.js";
+import { ChatRoom } from "../models/Room.js";
 import { Tutor } from "../models/User.js";
 
-const createRoom = async (req, res) => {
+const createChatRoom = async (req, res) => {
   const { id: tutorId } = req.params;
-  const roomExists = await Room.findOne({
+  const roomExists = await ChatRoom.findOne({
     //finds the exact room
     userIds: { $eq: [req.user.userId, tutorId] },
   });
@@ -21,14 +21,14 @@ const createRoom = async (req, res) => {
     );
   }
 
-  const room = await Room.create({
+  const room = await ChatRoom.create({
     userIds: [req.user.userId, tutorId],
   });
   res.status(StatusCodes.CREATED).json({ room });
 };
 //switch to aggregate
-const getRooms = async (req, res) => {
-  const rooms = await Room.find(
+const getChatRooms = async (req, res) => {
+  const rooms = await ChatRoom.find(
     /*Gets all the chats the user is in*/
     { userIds: { $in: [req.user.userId] } },
     /*gets array with only last index(message)
@@ -45,4 +45,4 @@ const getRooms = async (req, res) => {
   res.status(StatusCodes.OK).json({ rooms });
 };
 
-export { createRoom, getRooms };
+export { createChatRoom, getChatRooms };

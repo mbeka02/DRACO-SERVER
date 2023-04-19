@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import validator from "validator";
 
-const RoomSchema = new mongoose.Schema(
+const ChatRoomSchema = new mongoose.Schema(
   {
     userIds: [
       {
@@ -23,5 +24,41 @@ const RoomSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-export default mongoose.model("Room", RoomSchema);
+const videoCallSchema = new mongoose.Schema(
+  {
+    userIds: [
+      {
+        type: mongoose.Schema.ObjectId,
+        required: true,
+        ref: "User",
+      },
+      {
+        type: mongoose.Schema.ObjectId,
+        required: true,
+        ref: "User",
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["Pending", "In progress", "Complete"],
+      default: "Pending",
+    },
+    duration: {
+      type: Number,
+      required: [true, "Enter the duration of the session"],
+    },
+    email: {
+      type: String,
+      required: [true, "Enter the email of the student"],
+      trim: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "email is invalid",
+      },
+    },
+  },
+  { timestamps: true }
+);
+const ChatRoom = mongoose.model("ChatRoom", ChatRoomSchema);
+const VideoCall = mongoose.model("VideoCall", videoCallSchema);
+export { ChatRoom, VideoCall };

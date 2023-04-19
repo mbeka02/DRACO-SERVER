@@ -1,12 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import Message from "../models/Message.js";
-import Room from "../models/Room.js";
+import { ChatRoom } from "../models/Room.js";
 import BadRequestError from "../errors/bad-request.js";
 
 const createMessage = async (req, res) => {
   const { id: roomId } = req.params;
   const { text } = req.body;
-  const room = await Room.findOne({ _id: roomId });
+  const room = await ChatRoom.findOne({ _id: roomId });
 
   if (!room) {
     throw new BadRequestError("Unable to find chat room details");
@@ -25,7 +25,7 @@ const createMessage = async (req, res) => {
 
 const getRoomMessages = async (req, res) => {
   const { id: roomId } = req.params;
-  const roomMessages = await Room.findOne(
+  const roomMessages = await ChatRoom.findOne(
     { _id: roomId },
     {
       //gets info on the other person the user is with
