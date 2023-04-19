@@ -56,6 +56,10 @@ const videoCallSchema = new mongoose.Schema(
         message: "email is invalid",
       },
     },
+    subject: {
+      type: String,
+      required: [true, "Enter the subject to be discussed"],
+    },
   },
   { timestamps: true }
 );

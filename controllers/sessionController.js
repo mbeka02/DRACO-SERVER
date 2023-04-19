@@ -3,11 +3,12 @@ import { VideoCall } from "../models/Room.js";
 import { User } from "../models/User.js";
 
 const createSession = async (req, res) => {
-  const { status, duration, email } = req.body;
+  const { duration, email } = req.body;
+  //find the user based on the email provided
   const student = await User.find({ email: email });
   await VideoCall.create({
-    status,
     duration,
+    subject,
     email,
     userIds: [req.user.userId, student._id],
   });
