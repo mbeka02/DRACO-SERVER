@@ -5,7 +5,7 @@ import {
   verifyAccount,
   logout,
 } from "../controllers/authController.js";
-import authenticateUser from "../middleware/authentication.js";
+import { authenticateUser } from "../middleware/authentication.js";
 
 const router = Router();
 

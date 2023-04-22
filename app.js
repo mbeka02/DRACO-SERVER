@@ -15,7 +15,7 @@ import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/errorHandler.js";
 
 //auth middleware
-import authenticateUser from "./middleware/authentication.js";
+import { authenticateUser } from "./middleware/authentication.js";
 
 //route imports
 import authRouter from "./routes/authRoutes.js";

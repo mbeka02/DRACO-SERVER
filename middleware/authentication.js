@@ -1,5 +1,6 @@
 import UnauthenticatedError from "../errors/unauthenticated.js";
 import { attachCookies, verifyToken } from "../utilities/jwt.js";
+import UnauthorizedError from "../errors/unauthorized.js";
 import Token from "../models/Token.js";
 const authenticateUser = async (req, res, next) => {
   // check for the tokens in the request obj
@@ -39,4 +40,14 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-export default authenticateUser;
+const checkPrivileges = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user.role.includes(roles)) {
+      throw new UnauthorizedError("This action is not allowed");
+    }
+    //pass to next fn
+    next();
+  };
+};
+
+export { authenticateUser, checkPrivileges };
