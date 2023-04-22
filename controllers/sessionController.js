@@ -1,11 +1,15 @@
 import { StatusCodes } from "http-status-codes";
 import { VideoCall } from "../models/Room.js";
 import { User } from "../models/User.js";
+import BadRequestError from "../errors/bad-request.js";
 
 const createSession = async (req, res) => {
-  const { duration, email } = req.body;
+  const { duration, email, subject } = req.body;
   //find the user based on the email provided
-  const student = await User.find({ email: email });
+  const student = await User.findOne({ email: email });
+  if (!student) {
+    throw new BadRequestError("Unable to find students email");
+  }
   await VideoCall.create({
     duration,
     subject,

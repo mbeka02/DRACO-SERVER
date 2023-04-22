@@ -29,6 +29,9 @@ import sessionRouter from "./routes/sessionRoutes.js";
 import * as url from "url";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
+//misc
+import { generateTokens } from "./utilities/nts.js";
+
 dotenv.config();
 
 const app = express();
@@ -86,6 +89,7 @@ io.on("connection", (socket) => {
         }
       });
     socket.join(roomId); //join user to specific room
+    console.log(`socket has joined room:${roomId}`);
 
     //socket.roomId = roomId;
 
@@ -111,21 +115,19 @@ io.on("connection", (socket) => {
   socket.on("stopped", ({ roomId }) => {
     socket.to(roomId).emit("...stopped");
   });
-
+  //sockets for WebRTC video calling
   socket.on("incomingCall", (data) => {
-    io.emit("call", { signal: data.signalData });
+    console.log(data.room);
+    socket.to(data.room).emit("call", { signal: data.signalData });
   });
 
   socket.on("acceptCall", (data) => {
-    io.emit("callAccepted", data.signal);
+    console.log(data.room);
+    io.to(data.room).emit("callAccepted", data.signal);
   });
 
   //handle disconnects
   socket.on("disconnect", () => {
-    /*socket.rooms.forEach((roomId) => {
-      socket.leave(roomId);
-      console.log(`User has left room: ${roomId}`);
-    });*/
     Array.from(socket.rooms).forEach((room) => {
       socket.leave(room);
       console.log(`User has left room ${room}`);
@@ -145,3 +147,4 @@ const startServer = async () => {
 };
 
 startServer();
+//generateTokens();
