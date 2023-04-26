@@ -101,6 +101,13 @@ const addCourses = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Details added" });
 };
 
+const getCourses = async (req, res) => {
+  const courses = await Tutor.findOne({ _id: req.user.userId }).select(
+    "Courses"
+  );
+  res.status(StatusCodes.OK).json({ courses });
+};
+
 const addEducationalDetails = async (req, res) => {
   const { school, degree, from, to } = req.body;
   const tutor = await Tutor.findOne({ _id: req.user.userId });
@@ -166,4 +173,5 @@ export {
   uploadDocuments,
   addEducationalDetails,
   addCourses,
+  getCourses,
 };

@@ -137,12 +137,10 @@ io.on("connection", (socket) => {
   });*/
   socket.on("offer", (payload) => {
     socket.to(payload.roomId).emit("offer", payload);
-    console.log(payload);
   });
 
   socket.on("answer", (payload) => {
     socket.to(payload.roomId).emit("answer", payload.sdp);
-    console.log(payload);
   });
 
   socket.on("ice-candidate", (payload) => {
