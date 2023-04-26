@@ -74,7 +74,7 @@ const port = 3000 || process.env.PORT;
 //io.on("connection", (socket) => console.log(`User connected ${socket.id}`));
 
 io.on("connection", (socket) => {
-  socket.on("join", (roomId) => {
+  socket.on("join", async (roomId) => {
     //console.log(socket.rooms);
 
     //socket has to leave all other rooms before it joins new one , prevents events from being visible while in another room
@@ -89,7 +89,17 @@ io.on("connection", (socket) => {
         }
       });
     socket.join(roomId); //join user to specific room
-    console.log(`socket has joined room:${roomId}`);
+    //console.log(`socket has joined room:${roomId}`);
+
+    // Have a joining event
+    // get no of sockets in room
+    //Check if length/no is greater than 2
+    //If so try to connect the 2 peers
+    const SOCKETS = await io.in(roomId).fetchSockets();
+    //console.log(SOCKETS.length);
+    if (SOCKETS.length > 1) {
+      socket.to(roomId).emit("otherUserJoined", roomId);
+    }
 
     //socket.roomId = roomId;
 
@@ -116,14 +126,27 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("...stopped");
   });
   //sockets for WebRTC video calling
-  socket.on("incomingCall", (data) => {
+  /* socket.on("incomingCall", (data) => {
     console.log(data.room);
     socket.to(data.room).emit("call", { signal: data.signalData });
-  });
+  });*/
 
-  socket.on("acceptCall", (data) => {
+  /*socket.on("acceptCall", (data) => {
     console.log(data.room);
     io.to(data.room).emit("callAccepted", data.signal);
+  });*/
+  socket.on("offer", (payload) => {
+    socket.to(payload.roomId).emit("offer", payload);
+    console.log(payload);
+  });
+
+  socket.on("answer", (payload) => {
+    socket.to(payload.roomId).emit("answer", payload.sdp);
+    console.log(payload);
+  });
+
+  socket.on("ice-candidate", (payload) => {
+    socket.to(payload.roomId).emit("ice-candidate", payload.candidate);
   });
 
   //handle disconnects
