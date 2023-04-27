@@ -98,11 +98,11 @@ const login = async (req, res) => {
     throw new UnauthorizedError("The input password is incorrect");
   }
   // check verification status
-  if (!user.verificationStatus) {
+  /* if (!user.verificationStatus) {
     throw new UnauthenticatedError(
       "Ensure that you have verified your account"
     );
-  }
+  }*/
   const tokenUser = createTokenUser(user);
 
   let refreshToken = "";

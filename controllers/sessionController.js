@@ -23,14 +23,11 @@ const createSession = async (req, res) => {
 
 const getSessions = async (req, res) => {
   //get all the sessions that the user is in
-  const sessions = await VideoCall.find(
-    {
-      userIds: {
-        $in: [req.user.userId],
-      },
+  const sessions = await VideoCall.find({
+    userIds: {
+      $in: [req.user.userId],
     },
-    { userIds: { $elemMatch: { $ne: req.user.userId } } }
-  )
+  })
     .populate("userIds", "name avatarUrl")
     .select("status subject");
   res.status(StatusCodes.OK).json({ sessions });

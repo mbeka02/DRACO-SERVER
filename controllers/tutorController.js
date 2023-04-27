@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../errors/bad-request.js";
 
 const getAllTutors = async (req, res) => {
-  const { search, order } = req.query;
+  const { search, order, page } = req.query;
   /*const tutors = await Tutor.aggregate([
      {
       $unwind: "$Courses",
@@ -29,17 +29,20 @@ const getAllTutors = async (req, res) => {
   //.select("-password").populate("Courses");
   // console.log(order);
   //refactor
-
+  const PAGE_SIZE = 8;
+  const PAGE_NO = page ? parseInt(page) : 0;
   const tutors = await Tutor.find(
     search
       ? {
           Courses: { $in: [search] },
           isProfileComplete: true,
         }
-      : { isProfileComplete: true }
+      : { isProfileComplete: true },
+    null,
+    { limit: PAGE_SIZE, skip: PAGE_NO * PAGE_SIZE }
   )
     .select("-password -Messages -documents ")
-    .sort(order);
+    .sort({ Rate: order });
 
   res.status(StatusCodes.OK).json({ tutors });
 };
