@@ -28,7 +28,7 @@ const getSessions = async (req, res) => {
       $in: [req.user.userId],
     },
   })
-    .populate("userIds", "name avatarUrl")
+    .populate("userIds", "name avatarUrl role")
     .select("status subject");
   res.status(StatusCodes.OK).json({ sessions });
 };
