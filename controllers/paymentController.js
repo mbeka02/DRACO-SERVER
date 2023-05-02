@@ -5,17 +5,17 @@ import BadRequestError from "../errors/bad-request.js";
 //handles all payment and transaction business logic
 
 const getPendingPayments = async (req, res) => {
-  const pendingPayments = await Session.find({
+  const payments = await Session.find({
     student: req.user.userId,
     isPayedFor: false,
   });
 
-  res.status(StatusCodes.OK).json({ payments: pendingPayments });
+  res.status(StatusCodes.OK).json({ payments });
 };
 
 const getPendingPayment = async (req, res) => {
   const { id: paymentId } = req.params;
-  const pendingPayment = await Session.findOne(
+  const payment = await Session.findOne(
     {
       _id: paymentId,
       student: req.user.userId,
@@ -25,11 +25,11 @@ const getPendingPayment = async (req, res) => {
     .populate("userIds", "name")
     .select("subject recurrence duration amount");
 
-  if (!pendingPayment) {
+  if (!payment) {
     throw new BadRequestError("Unable to find details on this session");
   }
 
-  res.status(StatusCodes.OK).json({ payment: pendingPayment });
+  res.status(StatusCodes.OK).json({ payment });
 };
 
 export { getPendingPayments, getPendingPayment };
