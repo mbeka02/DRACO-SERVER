@@ -24,7 +24,7 @@ const ChatRoomSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const videoCallSchema = new mongoose.Schema(
+const sessionSchema = new mongoose.Schema(
   {
     userIds: [
       {
@@ -38,6 +38,15 @@ const videoCallSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    student: {
+      type: mongoose.Schema.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    amount: {
+      type: Number,
+      required: [true, "Enter the your rates per hour"],
+    },
     status: {
       type: String,
       enum: ["Pending", "In progress", "Complete"],
@@ -60,9 +69,13 @@ const videoCallSchema = new mongoose.Schema(
       type: String,
       required: [true, "Enter the subject to be discussed"],
     },
+    isPayedFor: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
 const ChatRoom = mongoose.model("ChatRoom", ChatRoomSchema);
-const VideoCall = mongoose.model("VideoCall", videoCallSchema);
-export { ChatRoom, VideoCall };
+const Session = mongoose.model("Session", sessionSchema);
+export { ChatRoom, Session };
