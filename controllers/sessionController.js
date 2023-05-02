@@ -4,13 +4,15 @@ import { User } from "../models/User.js";
 import BadRequestError from "../errors/bad-request.js";
 
 const createSession = async (req, res) => {
-  const { duration, email, subject } = req.body;
+  const { duration, email, subject, startedAt, recurrence } = req.body;
   //find the user based on the email provided
   const student = await User.findOne({ email: email });
+  //get tutor id
   const tutor = await User.findOne({ _id: req.user.userId });
   if (!student) {
     throw new BadRequestError("Unable to find students email");
   }
+  //create a session
   await Session.create({
     duration,
     subject,
@@ -18,6 +20,8 @@ const createSession = async (req, res) => {
     userIds: [req.user.userId, student._id],
     student: student._id,
     amount: tutor.Rate,
+    startedAt,
+    recurrence,
   });
   res
     .status(StatusCodes.CREATED)
@@ -25,7 +29,7 @@ const createSession = async (req, res) => {
 };
 
 const getSessions = async (req, res) => {
-  //get all the sessions that the user is in
+  //get all the sessions that the user is in that have been paid for
   const sessions = await Session.find({
     userIds: {
       $in: [req.user.userId],

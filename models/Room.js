@@ -73,6 +73,13 @@ const sessionSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startedAt: {
+      type: Date,
+      required: [true, "Enter the date and time of the session"],
+    },
+    recurrence: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
