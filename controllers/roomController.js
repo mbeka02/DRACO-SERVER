@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import BadRequestError from "../errors/bad-request.js";
-import { ChatRoom } from "../models/Room.js";
+import ChatRoom from "../models/Room.js";
 import { Tutor } from "../models/User.js";
 
 const createChatRoom = async (req, res) => {

@@ -25,6 +25,7 @@ import userRouter from "./routes/userRoutes.js";
 import roomRouter from "./routes/roomRoutes.js";
 import messageRouter from "./routes/messageRoutes.js";
 import sessionRouter from "./routes/sessionRoutes.js";
+import paymentRouter from "./routes/paymentRoutes.js";
 //dirname import- needed since were using esmodules and not commonJS
 import * as url from "url";
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
@@ -60,6 +61,7 @@ app.use("/api/v1/tutors", authenticateUser, tutorRouter);
 app.use("/api/v1/rooms", authenticateUser, roomRouter);
 app.use("/api/v1/messages", authenticateUser, messageRouter);
 app.use("/api/v1/sessions", authenticateUser, sessionRouter);
+app.use("/api/v1/payments", authenticateUser, paymentRouter);
 app.use(
   "/images",
   authenticateUser,

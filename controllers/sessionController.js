@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import { Session } from "../models/Room.js";
+import Session from "../models/Session.js";
 import { User } from "../models/User.js";
 import BadRequestError from "../errors/bad-request.js";
 
