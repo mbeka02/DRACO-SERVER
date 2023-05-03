@@ -98,6 +98,14 @@ const addCourses = async (req, res) => {
       "Ensure that you have filled all the required fields"
     );
   }
+
+  if (tutor.Courses.includes(name)) {
+    throw new BadRequestError("You have already added this course");
+  }
+  //ensure a maximum of 5 courses
+  if (tutor.Courses.length >= 5) {
+    throw new BadRequestError("You can only add a maximum of 5 courses");
+  }
   //tutor.Courses.push(course);
   tutor.Courses.push(name);
   await tutor.save();
@@ -109,6 +117,19 @@ const getCourses = async (req, res) => {
     "Courses"
   );
   res.status(StatusCodes.OK).json({ courses });
+};
+
+const deleteCourses = async (req, res) => {
+  const { id: courseName } = req.params;
+  const tutor = await Tutor.findOne({ _id: req.user.userId });
+  if (!tutor) {
+    throw new BadRequestError(
+      "An error has occured, your tutor account details could not be found"
+    );
+  }
+  tutor.Courses.pull(courseName);
+  await tutor.save();
+  res.status(StatusCodes.OK).json({ msg: "Course deleted" });
 };
 
 const addEducationalDetails = async (req, res) => {
@@ -177,4 +198,5 @@ export {
   addEducationalDetails,
   addCourses,
   getCourses,
+  deleteCourses,
 };
