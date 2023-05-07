@@ -5,30 +5,7 @@ import BadRequestError from "../errors/bad-request.js";
 
 const getAllTutors = async (req, res) => {
   const { search, order, page } = req.query;
-  /*const tutors = await Tutor.aggregate([
-     {
-      $unwind: "$Courses",
-    },
-    //can't get this to work yet
-    {
-      $search: {
-        index: "name_auto",
-        autocomplete: {
-          query: search, // noticed we assign a dynamic value to "query"
-          path: "Courses",
-        },
-      },
-    },
-    {
-      $project: {
-        name: 1,
-      },
-    },
-  ]);*/
 
-  //.select("-password").populate("Courses");
-  // console.log(order);
-  //refactor
   const PAGE_SIZE = 8;
   const PAGE_NO = page ? parseInt(page) : 0;
   const tutors = await Tutor.find(
@@ -43,8 +20,17 @@ const getAllTutors = async (req, res) => {
   )
     .select("-password -Messages -documents ")
     .sort({ Rate: order });
+  const total = await Tutor.countDocuments(
+    search
+      ? {
+          Courses: { $in: [search] },
+          isProfileComplete: true,
+        }
+      : { isProfileComplete: true }
+  );
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
-  res.status(StatusCodes.OK).json({ tutors });
+  res.status(StatusCodes.OK).json({ tutors, totalPages });
 };
 
 const getSingleTutor = async (req, res) => {
