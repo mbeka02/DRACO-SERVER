@@ -2,6 +2,7 @@ import UnauthenticatedError from "../errors/unauthenticated.js";
 import { attachCookies, verifyToken } from "../utilities/jwt.js";
 import UnauthorizedError from "../errors/unauthorized.js";
 import Token from "../models/Token.js";
+import axios from "axios";
 const authenticateUser = async (req, res, next) => {
   // check for the tokens in the request obj
 
@@ -50,4 +51,28 @@ const checkPrivileges = (...roles) => {
   };
 };
 
-export { authenticateUser, checkPrivileges };
+//generate access token for daraja
+const generateAccessToken = async (req, res, next) => {
+  //base64 encode consumer key and consumer secret
+  const credentials = new Buffer.from(
+    `${process.env.CONSUMER_KEY}:${process.env.CONSUMER_SECRET}`
+  ).toString("base64");
+  try {
+    const response = await axios.get(
+      "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+      {
+        headers: {
+          authorization: `Basic ${credentials}`,
+        },
+      }
+    );
+    console.log(response.data.access_token);
+    req.accessToken = response.data.access_token;
+
+    next();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { authenticateUser, checkPrivileges, generateAccessToken };
