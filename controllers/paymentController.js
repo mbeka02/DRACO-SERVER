@@ -9,10 +9,15 @@ axios.defaults.withCredentials = true;
 //handles all payment and transaction business logic
 
 const getPendingPayments = async (req, res) => {
-  const payments = await Session.find({
-    student: req.user.userId,
-    isPayedFor: false,
-  });
+  const payments = await Session.find(
+    {
+      student: req.user.userId,
+      isPayedFor: false,
+    },
+    { userIds: { $elemMatch: { $ne: req.user.userId } } }
+  )
+    .populate("userIds", "name")
+    .select("subject duration amount");
 
   res.status(StatusCodes.OK).json({ payments });
 };
