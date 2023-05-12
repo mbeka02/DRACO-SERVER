@@ -3,6 +3,7 @@ import Session from "../models/Session.js";
 import BadRequestError from "../errors/bad-request.js";
 import Transaction from "../models/Transaction.js";
 import axios from "axios";
+import { makePayout } from "../utilities/daraja.js";
 axios.defaults.withCredentials = true;
 
 //handles all payment and transaction business logic
@@ -38,6 +39,13 @@ const getPendingPayment = async (req, res) => {
 //handles mobile transactions
 const mobilePayment = async (req, res) => {
   const { phoneNumber, amount } = req.body;
+
+  if (!phoneNumber || !amount) {
+    throw new BadRequestError("Please provide a phone number and amount");
+  }
+  if (amount < 1) {
+    throw new BadRequestError("Amount must be greater than 0");
+  }
   //remove 0 from phone number
   const phone = phoneNumber.substring(1);
 
@@ -72,7 +80,7 @@ const mobilePayment = async (req, res) => {
       PhoneNumber: `254${phone}`,
       //change to live URL in prod won't work in dev
       CallBackURL:
-        "https://0d2a-41-90-65-7.ngrok-free.app/api/v1/payments/callback", // ngrok- https://64b6-41-90-65-7.ngrok-free.app
+        "https://0fae-41-90-70-255.ngrok-free.app/api/v1/payments/callback", // ngrok- https://64b6-41-90-65-7.ngrok-free.app
       AccountReference: "Test",
       TransactionDesc: "Test",
     },
@@ -83,12 +91,19 @@ const mobilePayment = async (req, res) => {
     }
   );
   // console.log(response);
+  //update payment status
+  //just for testing
+  const session = await Session.findOne({ student: req.user.userId });
+  session.isPayedFor = true;
+  await session.save();
+  //makePayout(amount, "254708374149");
   res.status(StatusCodes.OK).json({ data: response.data });
 };
 //call back for mobile payment
 const mobilePaymentCallback = async (req, res) => {
   console.log(req.body);
 };
+
 export {
   getPendingPayments,
   getPendingPayment,

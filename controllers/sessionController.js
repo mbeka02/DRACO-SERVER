@@ -34,6 +34,7 @@ const getSessions = async (req, res) => {
     userIds: {
       $in: [req.user.userId],
     },
+    isPayedFor: true,
   })
     .populate("userIds", "name avatarUrl role")
     .select("status subject");
