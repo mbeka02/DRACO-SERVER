@@ -57,6 +57,10 @@ const sessionSchema = new mongoose.Schema(
     recurrence: {
       type: String,
     },
+    //plan paystack related fields
+    plan: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

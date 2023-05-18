@@ -4,6 +4,7 @@ import BadRequestError from "../errors/bad-request.js";
 import Transaction from "../models/Transaction.js";
 import axios from "axios";
 import { makePayout } from "../utilities/daraja.js";
+import { User } from "../models/User.js";
 axios.defaults.withCredentials = true;
 
 //handles all payment and transaction business logic
@@ -108,6 +109,58 @@ const mobilePayment = async (req, res) => {
 const mobilePaymentCallback = async (req, res) => {
   console.log(req.body);
 };
+
+//paystack payment
+const paystackPayment = async (req, res) => {
+  //initialize payment , include plan if it is a subscription
+  const { email, amount } = req.body;
+  const session = await Session.findOne({ student: req.user.userId });
+  const plan = session.plan;
+  //optionally include plan
+
+  const response = await axios.post(
+    "https://api.paystack.co/transaction/initialize",
+    {
+      email,
+      amount,
+      callback_url:
+        "https://0fae-41-90-70-255.ngrok-free.app/api/v1/payments/callback",
+      plan,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+      },
+    }
+  );
+  res.status(StatusCodes.OK).json({ data: response.data });
+};
+
+//create plan
+/*const createPlan = async (req, res) => {
+  const { duration, email, reccurence, subject } = req.body;
+  //find the user based on the email provided
+  const student = await User.findOne({ email: email });
+  if (!student) {
+    throw new BadRequestError("Unable to find students email");
+  }
+  const tutor = await User.findOne({ _id: req.user.userId });
+  const amount = duration * tutor.Rate;
+  const response = await axios.post(
+    "https://api.paystack.co/plan",
+    {
+      name: `${student._id}-${subject}`,
+      amount,
+      interval: reccurence,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+      },
+    }
+  );
+  res.status(StatusCodes.OK).json({ data: response.data });
+};*/
 
 export {
   getPendingPayments,

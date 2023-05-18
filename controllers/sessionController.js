@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import Session from "../models/Session.js";
 import { User } from "../models/User.js";
 import BadRequestError from "../errors/bad-request.js";
+import axios from "axios";
 
 const createSession = async (req, res) => {
   const { duration, email, subject, startedAt, recurrence } = req.body;
@@ -13,7 +14,7 @@ const createSession = async (req, res) => {
     throw new BadRequestError("Unable to find students email");
   }
   //create a session
-  await Session.create({
+  const session = await Session.create({
     duration,
     subject,
     email,
@@ -23,9 +24,27 @@ const createSession = async (req, res) => {
     startedAt,
     recurrence,
   });
-  res
-    .status(StatusCodes.CREATED)
-    .json({ msg: "meeting created , check the sessions tab after payment" });
+
+  const response = await axios.post(
+    "https://api.paystack.co/plan",
+    {
+      name: `${student._id}-${subject}`,
+      amount,
+      interval: recurrence,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+      },
+    }
+  );
+  session.plan = response.data.data.id;
+  await session.save();
+
+  res.status(StatusCodes.CREATED).json({
+    msg: "meeting created , check the sessions tab after payment",
+    data: response.data,
+  });
 };
 
 const getSessions = async (req, res) => {
