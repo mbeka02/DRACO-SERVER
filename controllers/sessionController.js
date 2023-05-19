@@ -29,7 +29,7 @@ const createSession = async (req, res) => {
     "https://api.paystack.co/plan",
     {
       name: `${student._id}-${subject}`,
-      amount,
+      amount: tutor.Rate * duration,
       interval: recurrence,
     },
     {

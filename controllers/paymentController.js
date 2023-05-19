@@ -123,8 +123,8 @@ const paystackPayment = async (req, res) => {
     {
       email,
       amount,
-      callback_url:
-        "https://0fae-41-90-70-255.ngrok-free.app/api/v1/payments/callback",
+      /*callback_url:
+        "https://0fae-41-90-70-255.ngrok-free.app/api/v1/payments/callback",*/
       plan,
     },
     {
@@ -167,4 +167,5 @@ export {
   getPendingPayment,
   mobilePayment,
   mobilePaymentCallback,
+  paystackPayment,
 };
