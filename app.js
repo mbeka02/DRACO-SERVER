@@ -7,6 +7,12 @@ import "express-async-errors";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+import helmet from "helmet";
+import rateLimiter from "express-rate-limit";
+import morgan from "morgan";
+import xss from "xss-clean";
+import ExpressMongoSanitize from "express-mongo-sanitize";
+
 //DB
 import connectDB from "./DB/connect.js";
 
@@ -45,6 +51,15 @@ const io = new Server(httpServer, {
 });
 
 app.set("trust proxy", 1);
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, //15 mins
+    max: 100,
+  })
+);
+app.use(helmet());
+app.use(xss());
+app.use(ExpressMongoSanitize());
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(cookieParser(process.env.JWT_SECRET));
 app.use(json());

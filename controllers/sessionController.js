@@ -56,7 +56,7 @@ const getSessions = async (req, res) => {
     isPayedFor: true,
   })
     .populate("userIds", "name avatarUrl role")
-    .select("status subject");
+    .select("status subject startedAt");
   res.status(StatusCodes.OK).json({ sessions });
 };
 
