@@ -30,7 +30,7 @@ const createSession = async (req, res) => {
     {
       name: `${student._id}-${subject}`,
       amount: tutor.Rate * duration,
-      interval: recurrence,
+      // interval: recurrence,
     },
     {
       headers: {

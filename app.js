@@ -53,11 +53,11 @@ const io = new Server(httpServer, {
 app.set("trust proxy", 1);
 app.use(
   rateLimiter({
-    windowMs: 15 * 60 * 1000, //15 mins
-    max: 100,
+    windowMs: 7 * 60 * 1000, //15 mins
+    max: 2000,
   })
 );
-app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(xss());
 app.use(ExpressMongoSanitize());
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
