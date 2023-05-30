@@ -106,7 +106,6 @@ io.on("connection", (socket) => {
         }
       });
     socket.join(roomId); //join user to specific room
-    //console.log(`socket has joined room:${roomId}`);
 
     // Have a joining event
     // get no of sockets in room
@@ -142,16 +141,7 @@ io.on("connection", (socket) => {
   socket.on("stopped", ({ roomId }) => {
     socket.to(roomId).emit("...stopped");
   });
-  //sockets for WebRTC video calling
-  /* socket.on("incomingCall", (data) => {
-    console.log(data.room);
-    socket.to(data.room).emit("call", { signal: data.signalData });
-  });*/
 
-  /*socket.on("acceptCall", (data) => {
-    console.log(data.room);
-    io.to(data.room).emit("callAccepted", data.signal);
-  });*/
   socket.on("offer", (payload) => {
     socket.to(payload.roomId).emit("offer", payload);
   });

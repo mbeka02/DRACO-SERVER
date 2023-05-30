@@ -48,13 +48,24 @@ const createSession = async (req, res) => {
 };
 
 const getSessions = async (req, res) => {
+  const { search } = req.query;
   //get all the sessions that the user is in that have been paid for
-  const sessions = await Session.find({
-    userIds: {
-      $in: [req.user.userId],
-    },
-    isPayedFor: true,
-  })
+  const sessions = await Session.find(
+    search
+      ? {
+          userIds: {
+            $in: [req.user.userId],
+          },
+          isPayedFor: true,
+          subject: search,
+        }
+      : {
+          userIds: {
+            $in: [req.user.userId],
+          },
+          isPayedFor: true,
+        }
+  )
     .populate("userIds", "name avatarUrl role")
     .select("status subject startedAt");
   res.status(StatusCodes.OK).json({ sessions });
