@@ -3,6 +3,8 @@ import { attachCookies, verifyToken } from "../utilities/jwt.js";
 import UnauthorizedError from "../errors/unauthorized.js";
 import Token from "../models/Token.js";
 import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 const authenticateUser = async (req, res, next) => {
   // check for the tokens in the request obj
 
@@ -71,7 +73,7 @@ const generateAccessToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log(error);
+    console.log("error");
   }
 };
 

@@ -6,6 +6,7 @@ import axios from "axios";
 
 const createSession = async (req, res) => {
   const { duration, email, subject, startedAt, recurrence } = req.body;
+  let response = "";
   //find the user based on the email provided
   const student = await User.findOne({ email: email });
   //get tutor id
@@ -25,21 +26,23 @@ const createSession = async (req, res) => {
     recurrence,
   });
 
-  const response = await axios.post(
-    "https://api.paystack.co/plan",
-    {
-      name: `${student._id}-${subject}`,
-      amount: tutor.Rate * duration,
-      // interval: recurrence,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+  if (recurrence) {
+    response = await axios.post(
+      "https://api.paystack.co/plan",
+      {
+        name: `${student._id}-${subject}`,
+        amount: tutor.Rate * duration,
+        interval: recurrence,
       },
-    }
-  );
-  session.plan = response.data.data.id;
-  await session.save();
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        },
+      }
+    );
+    session.plan = response.data.data.id;
+    await session.save();
+  }
 
   res.status(StatusCodes.CREATED).json({
     msg: "meeting created , check the sessions tab after payment",

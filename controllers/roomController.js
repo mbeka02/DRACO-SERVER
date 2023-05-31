@@ -11,7 +11,6 @@ const createChatRoom = async (req, res) => {
   });
 
   if (roomExists) {
-    // console.log(roomExists);
     return res.status(StatusCodes.OK).json({ room: roomExists });
   }
   const tutor = await Tutor.findOne({ _id: tutorId });

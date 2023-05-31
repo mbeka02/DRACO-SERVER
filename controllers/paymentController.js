@@ -86,7 +86,8 @@ const mobilePayment = async (req, res) => {
       PhoneNumber: `254${phone}`,
       //change to live URL in prod won't work in dev
       CallBackURL:
-        "https://0fae-41-90-70-255.ngrok-free.app/api/v1/payments/callback", // ngrok- https://64b6-41-90-65-7.ngrok-free.app
+        "https://7588-41-90-68-245.ngrok-free.app/api/v1/payments/callback",
+      //"https://0fae-41-90-70-255.ngrok-free.app/api/v1/payments/callback", // ngrok- https://64b6-41-90-65-7.ngrok-free.app
       AccountReference: "Test",
       TransactionDesc: "Test",
     },
@@ -114,25 +115,43 @@ const mobilePaymentCallback = async (req, res) => {
 const paystackPayment = async (req, res) => {
   //initialize payment , include plan if it is a subscription
   const { email, amount } = req.body;
-  const session = await Session.findOne({ student: req.user.userId });
+  const { id: paymentId } = req.params;
+  const session = await Session.findOne({
+    student: req.user.userId,
+    _id: paymentId,
+  });
   const plan = session.plan;
   //optionally include plan
+  console.log(session);
 
-  const response = await axios.post(
-    "https://api.paystack.co/transaction/initialize",
-    {
-      email,
-      amount,
-      /*callback_url:
-        "https://0fae-41-90-70-255.ngrok-free.app/api/v1/payments/callback",*/
-      plan,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-      },
-    }
-  );
+  const response = plan
+    ? await axios.post(
+        "https://api.paystack.co/transaction/initialize",
+        {
+          email,
+          amount,
+          /*callback_url:
+        "https://1f4b-41-90-68-245.ngrok-free.app /api/v1/payments/callback",*/
+          plan,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+          },
+        }
+      )
+    : await axios.post(
+        "https://api.paystack.co/transaction/initialize",
+        {
+          email,
+          amount,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+          },
+        }
+      );
   res.status(StatusCodes.OK).json({ data: response.data });
 };
 
